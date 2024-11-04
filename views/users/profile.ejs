@@ -1,8 +1,17 @@
 <% layout("layouts/boilerplate") %>
+<style>
+@media (max-width: 700px) {
+  .remove-offset {
+    margin-left: 3rem !important;
+  }
+}
+
+</style>
+
 <div class="row mt-3 mb-3">
     <h4 style="text-align: center; color: #2C3E50;"> Profile in NextDestination </h4>
     <% if (currUser) { %>
-      <div class="card col-6 offset-4" style="width: 20rem;">
+      <div class="card remove-offset col-6 offset-4 " style="width: 20rem;">
         <img src="<%=user.image.url%>" style="height: 18rem;" class="card-img-top" alt="...">
         <div class="card-body userBody">
           <h5 class="card-title"><%=user.username%></h5>
@@ -17,7 +26,7 @@
     </div>
     <% } %>
 
-    <div class="btns col-6 offset-4 mt-3">
+    <div class="btns col-6 offset-4 mt-3 remove-offset">
       <%if(currUser && currUser._id.equals(user._id)){%>
         <% if (!currUser) { %>
           <a class="nav-link" aria-current="page" href="/signup"><button class="btn btn1">Sign Up</button></a>
