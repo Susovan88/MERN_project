@@ -1,0 +1,152 @@
+<% layout("layouts/boilerplate") %>  
+
+<style>
+  #filters{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter{
+    text-align: center;
+    margin-top: 2rem;
+    margin-right: 2rem;
+    opacity: 0.7;
+    background: none !important;
+    cursor: pointer;
+    border: none; 
+  }
+  .filter:hover{
+    opacity: 1;
+    color: #18BC9C;
+    cursor: pointer;
+  }
+  .filter p{
+    font-size: 0.8rem;
+  }
+  .tax-info{
+    display: none;
+  }
+  .tax-btn{
+    border: 2px solid #18BC9C;
+    border-radius: 1rem;
+    height: 3rem;
+    padding: 0.5rem;
+    margin-left: 3rem;
+  }
+</style>
+
+
+<div id="filters">
+  <div class="filter" onclick="filterCategory('Tranding')">
+    <i class="fa-solid fa-fire"></i>
+    <p>Tranding</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Arctic')">
+    <i class="fa-solid fa-snowflake"></i>
+    <p>Arctic</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Tower')">
+    <i class="fa-solid fa-tower-observation"></i>
+    <p>Tower</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Top Cities')">
+    <i class="fa-solid fa-tree-city"></i>
+    <p>Top Cities</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Rooms')">
+    <i class="fa-solid fa-bed"></i>
+    <p>Rooms</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Island')">
+    <i class="fa-solid fa-house-tsunami"></i>
+    <p>Island</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Historical')">
+    <i class="fa-solid fa-landmark"></i>
+    <p>Historical</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Camping')">
+    <i class="fa-solid fa-campground"></i>
+    <p>Camping</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Amazing View')">
+    <i class="fa-solid fa-sun-plant-wilt"></i>
+    <p>Amazing View</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Beachfront')">
+    <i class="fa-solid fa-umbrella-beach"></i>
+    <p>Beachfront</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Castles')">
+    <i class="fa-brands fa-fort-awesome"></i>
+    <p>Castles</p>
+  </div>
+  <div class="filter" onclick="filterCategory('Mountain View')">
+    <i class="fa-solid fa-mountain-sun"></i>
+    <p>Mountain View</p>
+  </div>
+  <div class="tax-btn">
+    <div class="form-check form-switch form-check-reverse">
+      <input class="form-check-input" type="checkbox" id="flexSwitchCheckReverse">
+      <label class="form-check-label" for="flexSwitchCheckReverse">Dsiplay total after taxes</label>
+    </div>
+  </div>
+</div>
+<!-- <h2>All Listings</h2> -->
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
+<%for(listing of allListings){%>
+    <a href="/listings/<%= listing._id %>" class="listing-link">
+        <div class="card listing-card col">
+            <img src="<%=listing.image.url %>" class="card-img-top" style="height:20rem;" alt="...">
+            <div class="card-img-overlay">
+                <button class="heart-btn" data-listing-id="<%= listing._id %>"><i class="fa-solid fa-heart heart"></i></button>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title"><%=listing.title%></h5>
+              <p class="card-text">
+                <b>&#8377; <%=listing.price.toLocaleString("en-IN")%>/night </b> 
+                <i class="tax-info">+15% GST</i>          
+              </p>
+            </div>
+        </div>
+    </a>
+<%}%>
+</div>
+
+<script>
+  let taxSwitch= document.getElementById("flexSwitchCheckReverse");
+  let taxInfo= document.getElementsByClassName("tax-info");
+  let heartBtns = document.getElementsByClassName("heart-btn");
+
+  taxSwitch.addEventListener("click",()=>{
+
+    for(info of taxInfo){
+      if(info.style.display=="inline"){
+        info.style.display="none";
+      }else{
+        info.style.display="inline";
+      }
+    }
+  });
+
+
+let hearts = document.getElementsByClassName("heart");
+for (let i = 0; i < heartBtns.length; i++) {
+  heartBtns[i].addEventListener("click", (event) => {
+    event.preventDefault();  // Prevent form submission if needed
+    let heart = hearts[i];
+    if (heart.style.color === "red") {
+      heart.style.color = "white";
+    } else {
+      heart.style.color = "red";
+    }
+  });
+}
+
+
+function filterCategory(category) {
+  const encodedCategory = encodeURIComponent(category);
+  window.location.href = `/listings/category?q=${encodedCategory}`;
+}
+
+</script>

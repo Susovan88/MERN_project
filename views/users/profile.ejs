@@ -1,0 +1,32 @@
+<% layout("layouts/boilerplate") %>
+<div class="row mt-3 mb-3">
+    <h4 style="text-align: center; color: #2C3E50;"> Profile in NextDestination </h4>
+    <% if (currUser) { %>
+      <div class="card col-6 offset-4" style="width: 20rem;">
+        <img src="<%=user.image.url%>" style="height: 18rem;" class="card-img-top" alt="...">
+        <div class="card-body userBody">
+          <h5 class="card-title"><%=user.username%></h5>
+          <b>About</b>
+          <textarea class="card-text" cols="34" readonly><%=user.about%></textarea>
+           <!-- <input type="text" class="card-text" style="width: 18rem;" value="<%=user.about%>" readonly> -->
+           <br>
+          <b>Address</b>
+          <br>
+          <textarea class="card-text" cols="34" readonly><%=user.address%></textarea>
+        </div>
+    </div>
+    <% } %>
+
+    <div class="btns col-6 offset-4 mt-3">
+      <%if(currUser && currUser._id.equals(user._id)){%>
+        <% if (!currUser) { %>
+          <a class="nav-link" aria-current="page" href="/signup"><button class="btn btn1">Sign Up</button></a>
+          <a class="nav-link" href="/login"><button class=" btn btn2">Log In</button></a>
+        <% } else { %>
+          <a href="/profile/<%=user._id%>/edit" class="btn btn1">Edit Profile</a>
+          <a class="nav-link" href="/logout"><button class=" btn btn2">Log Out</button></a>
+        <% } %>
+      <%}%>
+    </div>
+
+</div>

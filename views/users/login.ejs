@@ -1,0 +1,24 @@
+<% layout("layouts/boilerplate") %>
+<div class="row mt-3">
+    <h2 style="text-align: center; color: #2C3E50;">LogIn on NextDestination</h2>
+    <div class="col-6 offset-3">
+        <form method="POST" action="/login" novalidate class="needs-validation mt-5">
+            <div class="mb-3">
+                <label for="username" class="form-lable">Username</label>
+                <input name="username" type="text" placeholder="Enter Username" class="form-control" required>
+                <div class="valid-feedback">Looks good!</div>
+                <div class="invalid-feedback">Username should be valid.</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-lable">Password</label>
+                <input name="password" type="password" placeholder="Enter Your Password" class="form-control" required>
+                <div class="valid-feedback">Password Looks good!</div>
+                <div class="invalid-feedback">Password should be valid.</div>
+            </div>
+            <button class="btn btn1 add-btn">LogIn</button>
+        </form>
+        <hr>
+        <p>It you have no account then click sign up</p>
+        <a href="/signup"><button class=" btn btn2">Sign Up</button></a>
+    </div>
+</div>

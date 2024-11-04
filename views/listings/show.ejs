@@ -1,0 +1,138 @@
+<% layout("layouts/boilerplate") %>
+<body>
+    <script>
+        const coordinates=<%-JSON.stringify(listing.geometry.coordinates)%>
+    </script>
+    <h2 style="text-align: center; color: #2C3E50;"><%=listing.title%></h2>
+    <div class="row mt-3">
+        <div class="col-6 offset-3">
+            <div class="card listing-card show-card" >
+                <img src="<%=listing.image.url%>" class="card-img-top show-image" alt="listing image">
+                <div class="card-body">
+                    <p class="card-text">
+                        Owned by <a href="/profile/<%=listing.owner._id%>"><b> <%=listing.owner.username%></b></a> <br>
+                        <%=listing.description%> <br>
+                        <b>&#8377; <%=listing.price.toLocaleString("en-IN")%>/night</b><br>
+                        <%=listing.country%> <br>
+                        <%=listing.location%>
+                    </p>
+                </div>
+              </div>
+        </div>
+        <br>
+
+        <%if( currUser && currUser._id.equals(listing.owner._id) ){%>
+
+            <div class="btns col-6 offset-3 mb-3">
+                <form method="GET" action="/listings/<%=listing._id%>/edit">
+                    <button class="btn btn1 offset-1">Edit</button>
+                </form>
+                <form method="POST" action="/listings/<%=listing._id%>?_method=DELETE">
+                    <button class="btn2 btn offset-5">Delete</button>
+                </form>
+            </div>
+
+        <%}%>
+
+        <div class="col-6 offset-3 mb-3">
+            <hr>
+            <br>
+            <p><b>Where You Will be</b></p>
+            <div id="map" class="mt-3 mb-3" style="height: 300px; width: 100%;"></div>
+        </div>
+
+        <div class="col-6 offset-3 mb-3">
+            <hr>
+            <%if(currUser){%>
+                <h6>Leave a Review</h6>
+                <form method="POST" action="/listings/<%=listing._id%>/reviews" novalidate class="needs-validation">
+                    <div class="mt-3 mb-3">
+                        <label for="rating" class="form-lable">Rating</label>
+                        <fieldset class="starability-growRotate">
+                            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                            <label for="first-rate1" title="Terrible">1 star</label>
+                            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                            <label for="first-rate2" title="Not good">2 stars</label>
+                            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                            <label for="first-rate3" title="Average">3 stars</label>
+                            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                            <label for="first-rate4" title="Very good">4 stars</label>
+                            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                            <label for="first-rate5" title="Amazing">5 stars</label>
+                          </fieldset>
+                    </div>
+                    <div class="mt-3 mb-3">
+                        <label for="comment" class="form-lable">Comment</label>
+                        <textarea name="review[comment]" id="comment" cols="30" rows="4" class="form-control" required></textarea>
+                        <div class="invalid-feedback">Please add your comments for review</div>
+                    </div>
+                    <button class="btn btn1">Submit</button>
+                </form>
+            <%}%>
+            <hr>
+        </div>
+        <%if(listing.reviews.length>0){%>
+            <div class="col-6 offset-3 mb-3">
+                <p><b>All Reviews</b></p>
+                <div class="row">
+                    <%for(review of listing.reviews){%>
+    
+                        <div class="card card-review col-5 ms-3 mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title"><b>@<%=review.author.username%></b></h6>
+                                <p class="card-text"><%=review.comment%></p>
+                                <p class="starability-result" data-rating="<%=review.rating%>"></p>
+                            </div>
+                            <%if( currUser && currUser._id.equals(review.author._id) ){%>
+    
+                                <form method="POST" action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE" class="mb-3 mt-3">
+                                    <button class="btn btn-sm btn2">Delete</button>
+                                </form>
+                                
+                            <%}%>
+                        </div>
+    
+                    <%}%>
+                </div>
+            </div>
+        <%}%>
+    </div>
+
+    <script src="/js/map.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const apiKey = 'YOUR_OPENCAGE_API_KEY'; // Replace with your OpenCage API key
+          const address = "1600 Amphitheatre Parkway, Mountain View, CA"; // Replace with the address you want to search
+    
+          // Fetch coordinates from OpenCage API
+          fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${apiKey}`)
+            .then(response => response.json())
+            .then(data => {
+              if (data.results.length > 0) {
+                const { lat, lng } = data.results[0].geometry;
+    
+                // Initialize the Leaflet map at the fetched coordinates
+                const map = L.map('map').setView([lat, lng], 13);
+    
+                // Add tile layer to the map
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  maxZoom: 19,
+                  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+    
+                // Add a marker at the fetched coordinates
+                const marker = L.marker([lat, lng]).addTo(map);
+                marker.bindPopup(`<b>${address}</b><br>Latitude: ${lat}, Longitude: ${lng}`).openPopup();
+              } else {
+                alert("Address not found");
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching coordinates:', error);
+            });
+        });
+      </script>
+
+</body>

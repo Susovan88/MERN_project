@@ -1,0 +1,171 @@
+body{
+    font-family: "Ubuntu", sans-serif !important;
+    font-style: italic;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.container-fluid{
+    background-color: #18BC9C;
+}
+.container{
+    flex: 1;
+}
+.navbar{
+    height: 5rem;
+    background-color:  #18BC9C ;
+}
+.fa-compass{
+    color: #2C3E50 ;
+    font-size: 2rem;
+}
+.nav-link{
+    color:#2C3E50 !important; 
+    font-weight: 600 !important;
+}
+.nav-link:hover{
+    text-decoration: underline;
+}
+
+.profileIcon{
+    text-decoration: none;
+    color:#2C3E50 !important; 
+    font-weight: 600 !important;
+    border:2px solid #2C3E50;
+    border-radius: 0.7rem;
+    padding: 0.5rem;
+}
+
+/* footer */
+.f-info-links a {
+    text-decoration: none;
+    color:#2C3E50;
+    font-size: 1.4;
+    margin-right:1rem ;
+}
+.f-info-links a:hover{
+    text-decoration: underline;
+}
+.f-info-socials{
+    width: 100%;
+}
+.f-info-links{
+    width: 100%;
+}
+.f-info-socials i{
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    color:#2C3E50;
+}
+.f-info-brand{
+    width: 100%;
+}
+.f-info{
+    height: 8rem;
+    text-align: center;
+    background-color:  #F4F4F4;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+/* cards */
+.listing-card{
+    border: none !important;
+    margin-bottom: 2rem;
+}
+.card-img-top{
+    border-radius: 0.5rem;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+.card-body{
+    padding: 0 !important;
+    color:#2C3E50;
+}
+.card-text{
+    font-weight: 400;
+    color:#2C3E50;
+
+}
+.card-title{
+    color:#2C3E50 !important;
+}
+.listing-link{
+    text-decoration: none;
+}
+ 
+/* card effect */
+
+.card-img-overlay{
+    opacity: 1;
+}
+
+.heart-btn {
+    background: none !important;
+    cursor: pointer;
+    border: none; /
+}
+
+.heart{
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+
+/* new page */
+.btn1{
+    color: #2C3E50 !important;
+    background-color:#18BC9C !important;
+    margin-right: 2rem;
+}
+.btn2{
+    color: #18BC9C !important ;
+    background-color: #2C3E50 !important;
+}
+/* show page */
+.show-image{
+    height: 30vh;
+
+}
+.btns{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+.show-card{
+    padding: 0;
+}
+
+/* review */
+.card-review{
+    background-color:#ECF0F1 !important;
+}
+
+
+/* map icon marker */
+.custom-marker {
+    color: #2C3E50;
+    background-color: #18BC9C; /* Color of the icon */
+    border-radius: 50%; /* Circular shape */
+    display: flex; /* Center content */
+    align-self: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    width: 30px; /* Icon width */
+    height: 30px; /* Icon height */
+    font-size: 20px; /* Font size of the icon */
+}
+
+
+
+/* user profile */
+.profile{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}

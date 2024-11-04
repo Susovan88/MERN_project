@@ -1,0 +1,29 @@
+<% layout("layouts/boilerplate") %>
+<div class="row mt-3 mb-3">
+    <h4 style="text-align: center; color: #2C3E50;">Edit your Profile</h4>
+    <div class="col-8 offset-2">
+        <form method="POST" action="/profile/<%=user._id%>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="about" class="form-lable">About</label>
+                <textarea name="about" id="description" class="form-control" required><%=user.about%></textarea>
+                <div class="invalid-feedback">about should be valid.</div>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-lable">Address</label>
+                <textarea name="address" id="description" class="form-control" required><%=user.address%></textarea>
+                <div class="invalid-feedback">address should be valid.</div>
+            </div>
+            <div class="mb-3">
+                <p class="form-lable">Original Listing Image</p>
+                <a href=""><img src="" alt="h" style="width:10rem;"></a>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-lable">Upload New Profile Image </label>
+                <input name="image" type="file" class="form-control">
+                <div class="invalid-feedback">Image should be valid.</div>
+            </div>
+            <button class="btn btn1 mt-3"> Edit </button>
+        </form>
+    </div>
+
+</div>
