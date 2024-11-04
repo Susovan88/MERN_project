@@ -1,5 +1,5 @@
 {
-  "engines":{
+  "engines": {
     "node": "20.16.0"
   },
   "name": "mern_project",
@@ -13,7 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "cloudinary": "^2.5.1",
+    "cloudinary": "^1.21.0",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^5.1.0",
     "dotenv": "^16.4.5",
