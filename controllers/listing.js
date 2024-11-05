@@ -26,29 +26,6 @@ module.exports.showListing=async(req,res)=>{
         return res.redirect("/listings");
     }
 
-    if(listing.geometry.type!=="Point"){
-        // =>geocode
-        let lat, lng;
-        try {
-            const data = await opencage.geocode({ q: `${listing.location}, ${listing.country}`, key: mapKey });
-    
-            if (data.results.length > 0) {
-                lat = data.results[0].geometry.lat; // Access latitude
-                lng = data.results[0].geometry.lng; // Access longitude
-                // console.log(`Latitude: ${lat}, Longitude: ${lng}`);
-            } else {
-                console.log('No results found.');
-            }
-        } catch (error) {
-            console.log('Error caught:', error.message);
-        }
-    
-        listing.geometry.type="Point";
-        listing.geometry.coordinates=[lat,lng];
-        await Listing.findByIdAndUpdate(id,{...listing});
-
-    }
-
     res.render("listings/show.ejs",{listing});
 }
 
