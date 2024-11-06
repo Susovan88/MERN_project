@@ -56,7 +56,6 @@ module.exports.saveRedirectUrl=(req,res,next)=>{
 //middleware function to check that user is listing's owner. If not, then user can not access to delete and edit this listing
 module.exports.isOwner =async(req,res,next)=>{
     let{id}=req.params;
-    // console.log(req.body);
     let listing=await Listing.findById(id);
     if(!listing.owner._id.equals(res.locals.currUser._id)){
         req.flash("error","You are not owner of this listing! So, you can not edit and delete this listing. ");
@@ -65,6 +64,7 @@ module.exports.isOwner =async(req,res,next)=>{
     next();
 }
 
+// middleware to get access to edit profile.
 module.exports.isCurrUser=async(req,res,next)=>{
     let{userId}=req.params;
     if (userId !== String(res.locals.currUser._id)) {
@@ -74,9 +74,9 @@ module.exports.isCurrUser=async(req,res,next)=>{
     next();
 }
 
+// middleware to check if(current user == review author) then get access to delete review
 module.exports.isReviewAuthor=async(req,res,next)=>{
     let{id,reviewId}=req.params;
-    // console.log(req.body);
     let review=await Review.findById(reviewId);
     if(!review.author._id.equals(res.locals.currUser._id)){
         req.flash("error","You are not author of this review! So, you can not delete this review. ");
