@@ -52,6 +52,14 @@ const listingSchema= new Schema({
     }
 });
 
+//indexing
+listingSchema.index({location:1});
+listingSchema.index({country:1});
+listingSchema.index({category:1});
+listingSchema.index({ owner: 1 });
+listingSchema.index({ price: 1 });
+
+// middleware to delete all reviews associated with a listing when the listing is deleted
 listingSchema.post("findOneAndDelete",async(listing)=>{
     if(listing) await Review.deleteMany({_id:{$in:listing.reviews}});
 });

@@ -13,13 +13,17 @@ router.route("/")
     .get(wrapAsync(listingController.index))
     .post(isLoggedIn, upload.single('listing[image]'),setCoordinates, validateListing, wrapAsync(listingController.createListing));
 
+// page route for pagination
+router.get("/page/:page",wrapAsync(listingController.index));
+
 // new route
 router.get("/new",isLoggedIn,listingController.renderNewForm);
 
 // search route
 router.get("/search",wrapAsync(listingController.searchListing));
 
-router.get("/category",wrapAsync(listingController.categorySearch));
+// filter route
+router.get("/filter",wrapAsync(listingController.filterSearch));
 
 router.route("/:id")
     .get(wrapAsync(listingController.showListing))

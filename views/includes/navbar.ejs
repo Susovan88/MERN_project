@@ -1,51 +1,286 @@
+
 <style>
-  .search-input{
+  .search-wrapper {
+    display: flex;
+    align-items: center;
     border: 2px solid #2C3E50;
-    width: 25rem;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    width: 32rem;
+    background: white;
   }
-  @media(max-width:700px){
-    .search-input{
-      width: 15rem;
+
+  /* Filter dropdown */
+  .filter-select {
+    border: none;
+    border-right: 1px solid #d5d5d5;
+    outline: none;
+    background: white;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.9rem;
+    color: #2C3E50;
+    cursor: pointer;
+    min-width: 105px;
+  }
+
+  .filter-select:focus {
+    box-shadow: none;
+  }
+
+  /* Search input */
+  .search-input {
+    border: none !important;
+    outline: none;
+    box-shadow: none !important;
+    width: 100%;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .search-input:focus {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Search button */
+  .search-btn {
+    border: none;
+    border-radius: 0;
+    padding: 0.55rem 1rem;
+    white-space: nowrap;
+  }
+
+  /* Existing logo */
+  .logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  /* Mobile */
+  @media(max-width: 700px) {
+
+    .search-wrapper {
+      width: 100%;
+      max-width: 100%;
+      margin-top: 0.5rem;
     }
-    .profileIcon{
+
+    .filter-select {
+      min-width: 95px;
+      font-size: 0.8rem;
+      padding: 0.55rem 0.4rem;
+    }
+
+    .search-input {
+      min-width: 0;
+      font-size: 0.85rem;
+    }
+
+    .search-btn {
+      padding: 0.55rem 0.7rem;
+      font-size: 0.85rem;
+    }
+
+    .profileIcon {
       border: none;
     }
   }
-  .logo {
-    width: 70px;            
-    height: 70px;      
-    border-radius: 50%;       
-    display: inline-block;      
-    vertical-align: middle;     
+
+  @media(max-width: 400px) {
+
+    .filter-select {
+      min-width: 85px;
+      font-size: 0.75rem;
+    }
+
+    .search-input {
+      font-size: 0.75rem;
+    }
+
+    .search-btn {
+      padding: 0.5rem;
+    }
   }
 </style>
+
+
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/listings"><img class="logo" src="https://res.cloudinary.com/dtnupwprt/image/upload/v1730049880/next_destination/tidks2ms4ffknylshqeu.jpg" alt=""></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-link" href="/listings">Explore</a>
-          <a class="nav-link" href="/listings/new">NextDesti your home</a>
-        </div>
-        <div class="navbar-nav ms-auto">
-          <form class="d-flex" action="/listings/search" method="GET" role="search">
-            <input class="form-control me-2 search-input" type="search" name="query" placeholder="Search Your Next Destination">
-            <button class="btn btn2" type="submit">Search</button>
-          </form>
-        </div>
-        <div class="navbar-nav ms-auto">
-          <%if(!currUser){%>
-            <a href="/login" class="profileIcon"><i class="fa-solid fa-user"></i> Profile</a>
-          <%}%>
-          <%if(currUser){%>
-            <a href="/profile/<%=currUser._id%>" class="profileIcon"><i class="fa-solid fa-user"></i> Profile</a>
-          <%}%>
-        </div>        
+
+  <div class="container-fluid">
+
+    <!-- Logo -->
+    <a class="navbar-brand" href="/listings">
+      <img
+        class="logo"
+        src="https://res.cloudinary.com/dtnupwprt/image/upload/v1730049880/next_destination/tidks2ms4ffknylshqeu.jpg"
+        alt="NextDestination"
+      >
+    </a>
+
+
+    <!-- Mobile Toggle -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+      <!-- Left Navbar -->
+      <div class="navbar-nav">
+
+        <a class="nav-link" href="/listings">
+          Explore
+        </a>
+
+        <a class="nav-link" href="/listings/new">
+          NextDesti your home
+        </a>
+
       </div>
+
+
+      <!-- Search Section -->
+      <div class="navbar-nav ms-auto">
+
+        <form
+          class="d-flex"
+          id="searchForm"
+          action="/listings/filter"
+          method="GET"
+          role="search"
+        >
+
+          <div class="search-wrapper">
+
+            <!-- Filter -->
+            <select
+              class="filter-select"
+              name="type"
+              id="filterType"
+            >
+              <option value="category">Category</option>
+              <option value="country">Country</option>
+              <option value="location">Location</option>
+              <option value="owner">Owner</option>
+            </select>
+
+
+            <!-- Search Input -->
+            <input
+              class="form-control search-input"
+              type="search"
+              name="q"
+              id="searchQuery"
+              placeholder="Search destination..."
+              autocomplete="off"
+              required
+            >
+
+
+            <!-- Search Button -->
+            <button
+              class="btn btn2 search-btn"
+              type="submit"
+            >
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span class="search-text">Search</span>
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <!-- Profile -->
+      <div class="navbar-nav ms-auto">
+
+        <% if(!currUser) { %>
+
+          <a href="/login" class="profileIcon">
+            <i class="fa-solid fa-user"></i>
+            Profile
+          </a>
+
+        <% } %>
+
+
+        <% if(currUser) { %>
+
+          <a
+            href="/profile/<%= currUser._id %>"
+            class="profileIcon"
+          >
+            <i class="fa-solid fa-user"></i>
+            Profile
+          </a>
+
+        <% } %>
+
+      </div>
+
     </div>
-  </nav>
+
+  </div>
+
+</nav>
+
+
+<script>
+
+  /*
+    Search example:
+
+    Category:
+    /listings/filter?type=category&q=Beachfront
+
+    Country:
+    /listings/filter?type=country&q=India
+
+    Location:
+    /listings/filter?type=location&q=Goa
+
+    Owner:
+    /listings/filter?type=owner&q=susovan
+  */
+
+  const filterType = document.getElementById("filterType");
+  const searchQuery = document.getElementById("searchQuery");
+
+
+  filterType.addEventListener("change", function () {
+
+    const selectedFilter = this.value;
+
+    if (selectedFilter === "category") {
+      searchQuery.placeholder = "Search by category...";
+    }
+
+    else if (selectedFilter === "country") {
+      searchQuery.placeholder = "Search by country...";
+    }
+
+    else if (selectedFilter === "location") {
+      searchQuery.placeholder = "Search by location...";
+    }
+
+    else if (selectedFilter === "owner") {
+      searchQuery.placeholder = "Search by owner username...";
+    }
+
+  });
+
+</script>

@@ -1,12 +1,23 @@
 const Listing= require("../models/listing");
 const opencage = require('opencage-api-client');
+const User=require("../models/user");
 const ExpressError = require("../utlis/ExpressError");
-let mapKey = process.env.MAP_API_KEY;
+// let mapKey = process.env.MAP_API_KEY;
 
-
+// controller functions for all listings pages
 module.exports.index=async(req,res)=>{
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs",{allListings});
+    const page=Math.max(1,parseInt(req.params.page) || 1);
+    const limit=9;
+    const skip=(page-1)*limit;
+
+    const [allListings,totalListings] = await Promise.all([Listing.find({})
+        .select("title image price category")
+        .skip(skip)
+        .limit(limit),
+        Listing.countDocuments({})
+    ]);
+    const totalPages=Math.ceil(totalListings/limit);
+    res.render("listings/index.ejs",{allListings,totalListings,currentPage:page,totalPages,filterType:null,filterValue:null});
 }
 
 module.exports.renderNewForm=(req, res) => {
@@ -102,16 +113,42 @@ module.exports.searchListing=async(req,res,next)=>{
      res.render("listings/index.ejs",{allListings});
 }
 
-
-module.exports.categorySearch=async(req,res)=>{
-    let {q}=req.query;
-    // console.log(q);
-    const allListings = await Listing.find({category:q});
-    if(allListings.length===0){
-        throw new ExpressError(402,"No listing exist in this category.");
+// search by category,owner,location,country,price
+module.exports.filterSearch=async(req,res)=>{
+    const {type,q}=req.query;
+    if(!type || !q){
+        req.flash("error","Query parameter is required");
+        return res.redirect("/listings");   
     }
-
-    res.render("listings/index.ejs",{allListings});
+    const page=Math.max(1,parseInt(req.query.page)||1);
+    const limit=9;
+    const skip=(page-1)*limit;
+    const filter={[type]:q};
+    if(type==="owner"){
+        const user=await User.findOne({"username":q});
+        if(!user){
+            req.flash("error","No user exist with this username.");
+            return res.redirect("/listings");
+        }
+        filter["owner"]=user._id;
+    }
+    if(["category","owner","location","country","price"].includes(type)===false){
+        req.flash("error","Invalid filter type.");
+        return res.redirect("/listings");
+    }
+    const [allListings,totalListings] = await Promise.all([Listing.find(filter)
+        .select("title image price category")
+        .skip(skip)
+        .limit(limit),
+        Listing.countDocuments(filter)
+    ]);
+    if(totalListings===0){
+        req.flash("error","No Listing exist in this category.");
+        return res.redirect("/listings");
+    }
+    const totalPages=Math.ceil(totalListings/limit);
+    
+    res.render("listings/index.ejs",{allListings,totalListings,currentPage:page,totalPages,filterType:type,filterValue:q});
 }
 
 

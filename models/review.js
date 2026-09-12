@@ -1,4 +1,3 @@
-const { date } = require("joi");
 const mongoose=require("mongoose");
 const Schema= mongoose.Schema;
 
@@ -18,5 +17,6 @@ const reviewSchema=new Schema({
         ref:"User",
     }
 });
+reviewSchema.index({ author: 1 });
 
 module.exports=mongoose.model("Review",reviewSchema);

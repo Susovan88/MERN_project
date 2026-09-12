@@ -20,6 +20,10 @@
     color: #18BC9C;
     cursor: pointer;
   }
+  .filter.active{
+  opacity: 1;
+  color: #18BC9C;
+  }
   .filter p{
     font-size: 0.8rem;
   }
@@ -42,51 +46,51 @@
 
 
 <div id="filters">
-  <div class="filter" onclick="filterCategory('Tranding')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Tranding' ? 'active' : '' %>" onclick="filterCategory('Tranding')">
     <i class="fa-solid fa-fire"></i>
     <p>Tranding</p>
   </div>
-  <div class="filter" onclick="filterCategory('Arctic')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Arctic' ? 'active' : '' %>" onclick="filterCategory('Arctic')">
     <i class="fa-solid fa-snowflake"></i>
     <p>Arctic</p>
   </div>
-  <div class="filter" onclick="filterCategory('Tower')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Tower' ? 'active' : '' %>" onclick="filterCategory('Tower')">
     <i class="fa-solid fa-tower-observation"></i>
     <p>Tower</p>
   </div>
-  <div class="filter" onclick="filterCategory('Top Cities')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Top Cities' ? 'active' : '' %>" onclick="filterCategory('Top Cities')">
     <i class="fa-solid fa-tree-city"></i>
     <p>Top Cities</p>
   </div>
-  <div class="filter" onclick="filterCategory('Rooms')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Rooms' ? 'active' : '' %>" onclick="filterCategory('Rooms')">
     <i class="fa-solid fa-bed"></i>
     <p>Rooms</p>
   </div>
-  <div class="filter" onclick="filterCategory('Island')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Island' ? 'active' : '' %>" onclick="filterCategory('Island')">
     <i class="fa-solid fa-house-tsunami"></i>
     <p>Island</p>
   </div>
-  <div class="filter" onclick="filterCategory('Historical')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Historical' ? 'active' : '' %>" onclick="filterCategory('Historical')">
     <i class="fa-solid fa-landmark"></i>
     <p>Historical</p>
   </div>
-  <div class="filter" onclick="filterCategory('Camping')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Camping' ? 'active' : '' %>" onclick="filterCategory('Camping')">
     <i class="fa-solid fa-campground"></i>
     <p>Camping</p>
   </div>
-  <div class="filter" onclick="filterCategory('Amazing View')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Amazing View' ? 'active' : '' %>" onclick="filterCategory('Amazing View')">
     <i class="fa-solid fa-sun-plant-wilt"></i>
     <p>Amazing View</p>
   </div>
-  <div class="filter" onclick="filterCategory('Beachfront')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Beachfront' ? 'active' : '' %>" onclick="filterCategory('Beachfront')">
     <i class="fa-solid fa-umbrella-beach"></i>
     <p>Beachfront</p>
   </div>
-  <div class="filter" onclick="filterCategory('Castles')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Castles' ? 'active' : '' %>" onclick="filterCategory('Castles')">
     <i class="fa-brands fa-fort-awesome"></i>
     <p>Castles</p>
   </div>
-  <div class="filter" onclick="filterCategory('Mountain View')">
+  <div class="filter <%= filterType === 'category' && filterValue === 'Mountain View' ? 'active' : '' %>" onclick="filterCategory('Mountain View')">
     <i class="fa-solid fa-mountain-sun"></i>
     <p>Mountain View</p>
   </div>
@@ -117,6 +121,86 @@
     </a>
 <%}%>
 </div>
+
+<!-- Pagination -->
+<% if(totalPages > 1) { %>
+
+  <nav aria-label="Listings pagination">
+    <ul class="pagination justify-content-center">
+
+      <!-- Previous -->
+      <% if(currentPage > 1) { %>
+
+        <li class="page-item">
+
+          <% if(filterType) { %>
+
+            <a
+              class="page-link"
+              href="/listings/filter?type=<%= encodeURIComponent(filterType) %>&q=<%= encodeURIComponent(filterValue) %>&page=<%= currentPage - 1 %>"
+            >
+              Previous
+            </a>
+
+          <% } else { %>
+
+            <a
+              class="page-link"
+              href="/listings/page/<%= currentPage - 1 %>"
+            >
+              Previous
+            </a>
+
+          <% } %>
+
+        </li>
+
+      <% } %>
+
+
+      <!-- Current Page / Total Pages -->
+      <li class="page-item active">
+
+        <span class="page-link">
+          <%= currentPage %> / <%= totalPages %>
+        </span>
+
+      </li>
+
+
+      <!-- Next -->
+      <% if(currentPage < totalPages) { %>
+
+        <li class="page-item">
+
+          <% if(filterType) { %>
+
+            <a
+              class="page-link"
+              href="/listings/filter?type=<%= encodeURIComponent(filterType) %>&q=<%= encodeURIComponent(filterValue) %>&page=<%= currentPage + 1 %>"
+            >
+              Next
+            </a>
+
+          <% } else { %>
+
+            <a
+              class="page-link"
+              href="/listings/page/<%= currentPage + 1 %>"
+            >
+              Next
+            </a>
+
+          <% } %>
+
+        </li>
+
+      <% } %>
+
+    </ul>
+  </nav>
+
+<% } %>
 
 <script>
   let taxSwitch= document.getElementById("flexSwitchCheckReverse");
@@ -151,7 +235,7 @@ for (let i = 0; i < heartBtns.length; i++) {
 
 function filterCategory(category) {
   const encodedCategory = encodeURIComponent(category);
-  window.location.href = `/listings/category?q=${encodedCategory}`;
+  window.location.href = `/listings/filter?type=category&q=${encodedCategory}`;
 }
 
 </script>
