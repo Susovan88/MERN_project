@@ -5,7 +5,7 @@ if(process.env.NODE_ENV != "production"){
 
 const express=require("express");
 const app=express();
-const mongoose=require("mongoose");
+const {main}=require("./utlis/mongoDB.js");
 const path=require("path");
 const exp = require("constants");
 const methodOverride=require("method-override");
@@ -17,7 +17,9 @@ const flash=require("connect-flash");
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
 const User=require("./models/user.js");
+const {connectRedis}=require("./utlis/redis.js");
 
+// routes
 const listingRouter= require("./routes/listing.js");
 const reviewRouter=require("./routes/review.js");
 const userRouter=require("./routes/user.js");
@@ -34,19 +36,15 @@ app.engine('ejs', ejsMate);
 
 app.use(express.static(path.join(__dirname,"/public")));
 
+// connect to mongoose database
 // const MONGO_URL='mongodb://127.0.0.1:27017/nextdesination';
+main();
+
+// connect to redis database
+connectRedis();
+
+// session store in mongoDB
 const dbUrl=process.env.ATLASDB_URL;
-
-main().then(()=>{
-    console.log("connection succssfull with mongoose")
-}).catch(err=>{
-    console.log(err);
-});
-
-async function main() {
-  await mongoose.connect(dbUrl);
-}
-
 const store=MongoStore.create({
     mongoUrl:dbUrl,
     crypto: {
