@@ -2,7 +2,7 @@ const express= require("express");
 const router= express.Router();
 const Listing= require("../models/listing.js");
 const wrapAsync= require("../utlis/wrapAsync.js");
-const {isLoggedIn,isOwner,validateListing,setCoordinates}= require("../middleware.js");
+const {isLoggedIn,isOwner,validateListing,setCoordinates,rateLimiter}= require("../middleware.js");
 const listingController=require("../controllers/listing.js")
 const multer  = require('multer');
 const {storage}=require("../cloudconfig.js");
@@ -10,29 +10,29 @@ const upload = multer({ storage });
 
 // index route
 router.route("/")
-    .get(wrapAsync(listingController.index))
-    .post(isLoggedIn, upload.single('listing[image]'),setCoordinates, validateListing, wrapAsync(listingController.createListing));
+    .get(rateLimiter({ limit: 20, windowSeconds: 60 }), wrapAsync(listingController.index))
+    .post(isLoggedIn,rateLimiter({ limit: 20, windowSeconds: 60 }), upload.single('listing[image]'),setCoordinates, validateListing, wrapAsync(listingController.createListing));
 
 // page route for pagination
-router.get("/page/:page",wrapAsync(listingController.index));
+router.get("/page/:page",rateLimiter({ limit: 20, windowSeconds: 60 }),wrapAsync(listingController.index));
 
 // new route
-router.get("/new",isLoggedIn,listingController.renderNewForm);
+router.get("/new",isLoggedIn,rateLimiter({ limit: 20, windowSeconds: 60 }),listingController.renderNewForm);
 
 // search route
-router.get("/search",wrapAsync(listingController.searchListing));
+router.get("/search",rateLimiter({ limit: 20, windowSeconds: 60 }),wrapAsync(listingController.searchListing));
 
 // filter route
-router.get("/filter",wrapAsync(listingController.filterSearch));
+router.get("/filter",rateLimiter({ limit: 20, windowSeconds: 60 }),wrapAsync(listingController.filterSearch));
 
 router.route("/:id")
-    .get(wrapAsync(listingController.showListing))
-    .put(isLoggedIn, isOwner, upload.single('listing[image]'),setCoordinates, validateListing, wrapAsync(listingController.updateListing))
-    .delete(isLoggedIn, isOwner, wrapAsync(listingController.deleteListing));
+    .get(rateLimiter({ limit: 20, windowSeconds: 60 }),wrapAsync(listingController.showListing))
+    .put(isLoggedIn,rateLimiter({ limit: 20, windowSeconds: 60 }), isOwner, upload.single('listing[image]'),setCoordinates, validateListing, wrapAsync(listingController.updateListing))
+    .delete(isLoggedIn, rateLimiter({ limit: 20, windowSeconds: 60 }), isOwner, wrapAsync(listingController.deleteListing));
 
 
 //edit route
-router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingController.renderEditForm));
+router.get("/:id/edit", isLoggedIn,rateLimiter({ limit: 20, windowSeconds: 60 }), isOwner, wrapAsync(listingController.renderEditForm));
 
 module.exports = router;
 

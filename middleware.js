@@ -6,6 +6,7 @@ const ExpressError= require("./utlis/ExpressError");
 const {listingSchema,reviewSchema}=require("./schema");
 const opencage = require('opencage-api-client');
 let mapKey = process.env.MAP_API_KEY;
+const {redisClient}=require("./utlis/redis.js");
 
 
 // listing schema validation middleware function for create route and update route.
@@ -18,7 +19,6 @@ module.exports.validateListing=(req,res,next)=>{
         next();
     }
 }
-
 
 // review schema validation middleware function....
 module.exports.validateReview=(req,res,next)=>{
@@ -104,5 +104,45 @@ module.exports.setCoordinates=async(req,res,next)=>{
     } catch (error) {
         console.log('Error caught:', error.message);
         next(error);
+    }
+}
+
+// middleware for rate limiting
+module.exports.rateLimiter=(option={})=>{
+    const limit=option.limit || 10;
+    const windowSeconds=option.windowSeconds || 60;
+    // 
+    const luaScript=`
+        local current=redis.call("INCR", KEYS[1])
+        if current==1 then 
+            redis.call("EXPIRE", KEYS[1],ARGV[1])
+        end
+        local ttl=redis.call("TTL",KEYS[1])
+        return {current,ttl}
+    `;
+    return async (req, res, next) => {
+        try {
+            const ip=req.ip;
+            const key=`rateLimit:ip:${ip}`;
+
+            const result=await redisClient.eval(luaScript,{
+                keys:[key],
+                arguments:[String(windowSeconds)]
+            });
+
+            const requestCount=Number(result[0]);
+            const ttl=Math.max(0,Number(result[1]));
+
+            if(requestCount>limit){
+                console.log(`Rate limit exceeded for IP: ${ip}`);
+                req.flash("error", `Too many requests. Please try again after ${ttl} seconds.`);
+                return res.redirect("/");
+            }
+
+            next();
+        } catch (error) {
+            console.error('Error in rate limiter middleware:', error);
+            next();
+        }
     }
 }

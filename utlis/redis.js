@@ -1,5 +1,5 @@
 const {createClient}=require("redis");
-// const MONGO_URL='mongodb://127.0.0.1:27017/nextdesination';
+
 const redisClient=createClient({
     username: process.env.REDIS_USERNAME,
     password: process.env.REDIS_PASSWORD,
