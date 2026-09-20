@@ -2,8 +2,8 @@ const Listing= require("../models/listing");
 const opencage = require('opencage-api-client');
 const User=require("../models/user");
 const ExpressError = require("../utlis/ExpressError");
+const {listingQueue}=require("../queues/listingQueue.js");
 const {redisClient,getListingCacheVersion,invalidateListingCache}=require("../utlis/redis.js");
-// let mapKey = process.env.MAP_API_KEY;
 
 // controller functions for all listings pages
 module.exports.index=async(req,res)=>{
@@ -90,6 +90,13 @@ module.exports.createListing=async(req,res,next)=>{
     // console.log(saveedListing);
 
     await invalidateListingCache(); // Invalidate the cache after creating a new listing    
+
+    // Add the new listing to the BullMQ queue for background processing
+    await listingQueue.add("testJob",{message:"New Listing Created!",listingId:newListing._id}).then(()=>{
+        console.log("New Listing added to the queue for background processing.");
+    }).catch(err=>{
+        console.error("Error adding listing to the queue:", err);
+    });
 
     req.flash("success","New Listing Created!");
     res.redirect("/listings");

@@ -7,13 +7,15 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "worker":"node workers/listingWorker.js"
   },
   "keywords": [],
   "author": "susovan",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bullmq": "^6.3.8",
     "cloudinary": "^1.21.0",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^5.1.0",
@@ -22,6 +24,7 @@
     "ejs-mate": "^4.0.0",
     "express": "^4.21.0",
     "express-session": "^1.18.1",
+    "ioredis": "^6.0.0",
     "joi": "^17.13.3",
     "method-override": "^3.0.0",
     "mongoose": "^8.7.0",

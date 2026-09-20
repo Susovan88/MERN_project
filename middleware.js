@@ -5,7 +5,7 @@ const User=require("./models/user");
 const ExpressError= require("./utlis/ExpressError");
 const {listingSchema,reviewSchema}=require("./schema");
 const opencage = require('opencage-api-client');
-let mapKey = process.env.MAP_API_KEY;
+let mapKey = process.env.OPENCAGE_API_KEY;
 const {redisClient}=require("./utlis/redis.js");
 
 
@@ -35,7 +35,9 @@ module.exports.validateReview=(req,res,next)=>{
 
 // middleware function that's chack in every action (create,edit,delete...)that user logged in. If user is not logged in then redrict to login page.
 module.exports.isLoggedIn=(req,res,next)=>{
-    // console.log(req.path, req.originalUrl);
+    console.log("========== AUTH CHECK ==========");
+    console.log("isAuthenticated:", req.isAuthenticated());
+
     if(!req.isAuthenticated()){
         // store the path where you redirect after login
         req.session.redirectUrl=req.originalUrl;
@@ -85,27 +87,48 @@ module.exports.isReviewAuthor=async(req,res,next)=>{
     next();
 }
 
-// middleware for create coordinates using location and country
-module.exports.setCoordinates=async(req,res,next)=>{
-    let lat, lng;
+// middleware to set coordinates using OpenCage API
+module.exports.setCoordinates = async (req, res, next) => {
     try {
-        const data = await opencage.geocode({ q: `${req.body.listing.location}, ${req.body.listing.country}`, key: mapKey });
+        const location = req.body.listing.location;
+        const country = req.body.listing.country;
 
-        if (data.results.length > 0) {
-            lat = data.results[0].geometry.lat; // Access latitude
-            lng = data.results[0].geometry.lng; // Access longitude
-            // console.log(`Latitude: ${lat}, Longitude: ${lng}`);
-            req.coordinates={lat:lat, lng:lng};
-        } else {
-            console.log('No results found.');
-            req.coordinates = { lat: null, lng: null };
+        console.log("Location:", location);
+        console.log("Country:", country);
+        console.log("API Key Loaded:", Boolean(mapKey));
+
+        if (!mapKey) {
+            throw new Error("OpenCage API key is missing");
         }
+
+        const data = await opencage.geocode({
+            q: `${location}, ${country}`,
+            key: mapKey
+        });
+
+        if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry;
+
+            req.coordinates = {
+                lat,
+                lng
+            };
+        } else {
+            console.log("No results found.");
+
+            req.coordinates = {
+                lat: null,
+                lng: null
+            };
+        }
+
         next();
+
     } catch (error) {
-        console.log('Error caught:', error.message);
+        console.log("OpenCage Error:", error.message);
         next(error);
     }
-}
+};
 
 // middleware for rate limiting
 module.exports.rateLimiter=(option={})=>{

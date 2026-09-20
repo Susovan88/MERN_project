@@ -36,7 +36,7 @@ module.exports.renderSignUpForm=(req,res)=>{
     res.render("users/signup.ejs");
 }
 
-module.exports.signUp=async(req,res,next)=>{
+module.exports.signUp=async(req,res)=>{
     try{
         let{username,email,password}=req.body;
         const newUser=new User({email,username});
