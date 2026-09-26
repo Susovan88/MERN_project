@@ -92,13 +92,25 @@ module.exports.createListing=async(req,res,next)=>{
     await invalidateListingCache(); // Invalidate the cache after creating a new listing    
 
     // Add the new listing to the BullMQ queue for background processing
-    await listingQueue.add("testJob",{message:"New Listing Created!",listingId:newListing._id}).then(()=>{
+    await listingQueue.add("sendListingEmail",
+        {
+            email:req.user.email,
+            listingTitle:newListing.title
+        },
+        {
+            attempts:3,
+            backoff:{type:"exponential", delay:5000}
+        }
+    ).then(()=>{
         console.log("New Listing added to the queue for background processing.");
     }).catch(err=>{
         console.error("Error adding listing to the queue:", err);
     });
 
-    req.flash("success","New Listing Created!");
+    req.flash(
+        "success",
+        "Listing created! Confirmation email will be sent shortly."
+    );
     res.redirect("/listings");
 }
 

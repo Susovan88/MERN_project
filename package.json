@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "worker":"node workers/listingWorker.js"
+    "worker": "node workers/listingWorker.js"
   },
   "keywords": [],
   "author": "susovan",
@@ -30,6 +30,7 @@
     "mongoose": "^8.7.0",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
+    "nodemailer": "^10.0.10",
     "opencage-api-client": "^1.0.7",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
